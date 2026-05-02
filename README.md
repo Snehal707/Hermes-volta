@@ -8,6 +8,52 @@ Hermes Volta turns a plain-English filter request into computed component values
 
 > Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
 
+## Architecture
+
+Hermes Volta runs on top of Hermes Agent. Hermes Agent is the runtime/orchestrator; this repository contains the Volta skill, simulation pipeline, dashboard, tests, and helper tools.
+
+```mermaid
+flowchart LR
+    CLI[CLI prompt] --> HA[Hermes Agent runtime]
+    TG[Telegram voice / text / vision] --> HA
+    UI[Dashboard prompt] --> API[FastAPI dashboard API]
+    API --> HA
+
+    HA --> KIMI[Kimi K2.6 model]
+    HA --> SKILL[Volta skill\nskills/volta/SKILL.md]
+    HA --> MEM[Memory + session search]
+    HA --> TOOLS[Hermes tools\nexecute_code, send_message,\ncron, background, rollback]
+
+    SKILL --> PIPE[Faraday pipeline\nsim/faraday_pipeline.py]
+    TOOLS --> PIPE
+    MEM --> PIPE
+
+    PIPE --> SIM[PySpice / Ngspice\nsim/simulate.py]
+    PIPE --> NET[SKiDL / KiCad netlist\nsim/netlist.py]
+    PIPE --> PCB[KiCad CLI export\nsim/pcb_export.py]
+    PIPE --> REPORT[Report + memory note\nsim/report.py]
+
+    SIM --> ART[Plots + actual cutoff]
+    NET --> ART
+    PCB --> ART
+    REPORT --> ART
+
+    ART --> DASH[Dashboard artifact panels]
+    ART --> TELE[Telegram delivery]
+    ART --> OUT[outputs/]
+```
+
+More detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+### Where Hermes Agent Is
+
+`hermes-agent/` is the local Hermes Agent runtime checkout used during development and demos. It is intentionally ignored by git because it is a large external runtime/dependency, not Volta source code. The repo integrates with Hermes Agent through:
+
+- `skills/volta/SKILL.md` and `skills/volta/references/`
+- Hermes tool calls such as `execute_code`, `send_message`, cron, background sessions, rollback, memory, and session search
+- `sim/faraday_pipeline.py`, the main executable design pipeline
+- `dashboard/api.py`, which exposes the Volta pipeline through the dashboard/API
+
 ## Hermes Agent Skills And Tools
 
 Hermes Volta is designed as a Hermes Agent capability showcase. The circuit pipeline is only one layer; the demo also exercises Hermes skills, memory, messaging, multimodal input, scheduling, background execution, and tool-driven engineering work.
