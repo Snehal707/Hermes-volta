@@ -4,6 +4,8 @@ Natural-language analog circuit design for Hermes Agent.
 
 Hermes Volta turns a plain-English filter request into computed component values, real PySpice/Ngspice simulation, validation plots, KiCad-compatible EDA artifacts, Gerbers, reports, Telegram delivery, and a live cyber-green dashboard.
 
+**Built for The Hermes Agent Creative Hackathon by Nous Research.** This repository is a hackathon submission showing Hermes Agent pushed into an engineering/creative software domain: analog circuit design from natural language, multimodal Telegram control, live dashboard streaming, memory, skills, web search, scheduling, and generated EDA artifacts.
+
 > Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
 
 ## Hermes Agent Skills And Tools
