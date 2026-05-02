@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HERMES VOLTA — Live Circuit Dashboard</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020403;
+      --panel: #06110b;
+      --panel-2: #07170e;
+      --grid: rgba(74, 255, 128, 0.08);
+      --green: #66ff99;
+      --green-hot: #b7ffd0;
+      --green-dim: #1f8f4f;
+      --amber: #ffd166;
+      --red: #ff6b6b;
+      --line: rgba(102, 255, 153, 0.28);
+      --shadow: 0 0 18px rgba(102, 255, 153, 0.13), inset 0 0 34px rgba(102, 255, 153, 0.04);
+      --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--green);
+      font-family: var(--font-ui);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(102, 255, 153, 0.14), transparent 34rem),
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--bg);
+      background-size: auto, 32px 32px, 32px 32px, auto;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 0, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 4px);
+      mix-blend-mode: overlay;
+      opacity: 0.28;
+      z-index: 10;
+    }
+
+    .shell {
+      width: min(1800px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 28px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 2px 18px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: clamp(24px, 3.2vw, 46px);
+      line-height: 1;
+      letter-spacing: 0;
+      color: var(--green-hot);
+      text-shadow: 0 0 12px rgba(102, 255, 153, 0.45);
+    }
+
+    .status {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--green-hot);
+      white-space: nowrap;
+    }
+
+    .status span {
+      display: block;
+      color: var(--green-dim);
+      margin-top: 4px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      background: rgba(6, 17, 11, 0.92);
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .control input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(102, 255, 153, 0.35);
+      background: #030805;
+      color: var(--green-hot);
+      font: 14px var(--font-mono);
+      padding: 12px 14px;
+      outline: none;
+    }
+
+    .control input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(102, 255, 153, 0.15);
+    }
+
+    .control button {
+      border: 1px solid var(--green);
+      background: rgba(102, 255, 153, 0.13);
+      color: var(--green-hot);
+      font: 700 13px var(--font-mono);
+      padding: 0 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .control button:disabled {
+      cursor: wait;
+      color: var(--green-dim);
+      border-color: var(--green-dim);
+    }
+
+    .history {
+      display: grid;
+      grid-template-columns: auto minmax(260px, 1fr);
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      background: rgba(6, 17, 11, 0.82);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      font-family: var(--font-mono);
+    }
+
+    .history label {
+      color: var(--green-hot);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .history select {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(102, 255, 153, 0.35);
+      background: #030805;
+      color: var(--green-hot);
+      font: 13px var(--font-mono);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .history select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(102, 255, 153, 0.15);
+    }
+
+    .panels {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .panel, .report, .terminal {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(102, 255, 153, 0.045), transparent 42%), var(--panel);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 390px;
+    }
+
+    .panel-title, .report-title, .terminal-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--green-hot);
+      background: rgba(0, 0, 0, 0.26);
+    }
+
+    .panel-title small, .report-title small, .terminal-title small {
+      color: var(--green-dim);
+      font-size: 11px;
+      text-transform: none;
+    }
+
+    .scope {
+      position: relative;
+      flex: 1;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      padding: 12px;
+      background: radial-gradient(circle at center, rgba(102, 255, 153, 0.08), transparent 60%), var(--panel-2);
+      overflow: hidden;
+    }
+
+    .scope::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(102, 255, 153, 0.1);
+      pointer-events: none;
+    }
+
+    .scope img {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(102, 255, 153, 0.2));
+    }
+
+    .transient-scope {
+      flex: 0 0 auto;
+      place-items: start center;
+      padding: 4px 4px 2px;
+      min-height: 0;
+    }
+
+    .transient-panel {
+      align-self: start;
+      grid-column: 1 / -1;
+      min-height: 0;
+    }
+
+    .transient-scope::before {
+      inset: 4px;
+    }
+
+    .transient-scope img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: none;
+      object-fit: contain;
+    }
+
+    .missing {
+      display: none;
+      position: absolute;
+      inset: 0;
+      place-items: center;
+      padding: 24px;
+      color: var(--amber);
+      font-family: var(--font-mono);
+      text-align: center;
+      background: rgba(2, 4, 3, 0.7);
+    }
+
+    .scope.is-missing .missing { display: grid; }
+    .scope.is-missing img { opacity: 0.12; }
+
+    .effect-panel {
+      margin-top: 16px;
+      min-height: 520px;
+    }
+
+    .effect-scope {
+      min-height: 440px;
+    }
+
+    .effect-caption {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px;
+      color: var(--green-hot);
+      background: rgba(0, 0, 0, 0.28);
+      font: 13px var(--font-mono);
+      text-align: center;
+    }
+
+    .report, .terminal {
+      margin-top: 16px;
+      min-height: 260px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      max-height: 38vh;
+      min-height: 220px;
+      overflow: auto;
+      color: var(--green-hot);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      background: #030805;
+    }
+
+    #design-output:empty::before {
+      content: "Awaiting /design stream...";
+      color: var(--green-dim);
+    }
+
+    .footer-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 12px;
+      color: var(--green-dim);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .panels { grid-template-columns: 1fr; }
+      .panel { min-height: 360px; }
+      .transient-panel {
+        grid-column: auto;
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(100vw - 20px, 1800px); padding-top: 16px; }
+      header, .footer-line { display: block; }
+      .status { text-align: left; margin-top: 12px; }
+      .control, .history { grid-template-columns: 1fr; }
+      .control button { min-height: 44px; }
+      .panel { min-height: 300px; }
+      .transient-panel { min-height: 0; }
+      .effect-panel { min-height: 360px; }
+      .effect-scope { min-height: 300px; }
+      pre { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>HERMES VOLTA — Live Circuit Dashboard</h1>
+      <div class="status">
+        API: <span id="api-status">checking...</span>
+        <span id="last-updated">Last updated: --</span>
+      </div>
+    </header>
+
+    <form class="control" id="design-form">
+      <input id="prompt" name="prompt" autocomplete="off" placeholder="design a low pass filter at 1kHz for audio at 5V">
+      <button id="design-button" type="submit">Run Design</button>
+    </form>
+
+    <div class="history">
+      <label for="design-select">Design History</label>
+      <select id="design-select" aria-label="Select previous Volta design">
+        <option value="">Loading designs...</option>
+      </select>
+    </div>
+
+    <section class="panels" aria-label="latest circuit outputs">
+      <article class="panel">
+        <div class="panel-title">
+          <span>Left / Bode Plot</span>
+          <small id="bode-path">/outputs/frequency_response.png</small>
+        </div>
+        <div class="scope" data-scope>
+          <img id="bode-img" src="http://localhost:8765/outputs/frequency_response.png" alt="Latest Bode frequency response plot">
+          <div class="missing">Waiting for frequency_response.png</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-title">
+          <span>Right / PCB View</span>
+          <small id="pcb-path">/outputs/pcb_view.png</small>
+        </div>
+        <div class="scope" data-scope>
+          <img id="pcb-img" src="http://localhost:8765/outputs/pcb_view.png" alt="Latest PCB layout preview">
+          <div class="missing">Waiting for pcb_view.png</div>
+        </div>
+      </article>
+
+      <article class="panel transient-panel">
+        <div class="panel-title">
+          <span>Transient Validation</span>
+          <small id="wave-path">/outputs/waveform.png</small>
+        </div>
+        <div class="scope transient-scope" data-scope>
+          <img id="wave-img" src="http://localhost:8765/outputs/waveform.png" alt="Latest transient waveform plot">
+          <div class="missing">Waiting for waveform.png</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel effect-panel" aria-label="filter effect comparison">
+      <div class="panel-title">
+        <span>FILTER EFFECT — VIN vs VOUT</span>
+        <small id="compare-path">/outputs/compare_plot.png</small>
+      </div>
+      <div class="scope effect-scope" data-scope>
+        <img id="compare-img" src="http://localhost:8765/outputs/compare_plot.png" alt="Filter effect comparison showing VIN versus VOUT">
+        <div class="missing">Waiting for compare_plot.png</div>
+      </div>
+      <div class="effect-caption">
+        🟠 Orange = input signal | 🟢 Green = filtered output (real simulation) | 🔴 Red bottom trace = rejected or difference content
+      </div>
+    </section>
+
+    <section class="terminal" aria-label="Hermes design stream">
+      <div class="terminal-title">
+        <span>Hermes Stream</span>
+        <small>POST /design</small>
+      </div>
+      <pre id="design-output"></pre>
+    </section>
+
+    <section class="report" aria-label="latest cutoff report">
+      <div class="report-title">
+        <span>Cutoff Report</span>
+        <small id="report-path">GET /report</small>
+      </div>
+      <pre id="report-text">Loading report...</pre>
+    </section>
+
+    <div class="footer-line">
+      <span>FastAPI control panel: http://localhost:8765</span>
+      <span>Auto-refresh: 30 seconds</span>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:8765";
+    const REFRESH_MS = 30000;
+    const OUTPUT_FILES = {
+      bode: "frequency_response.png",
+      wave: "waveform.png",
+      pcb: "pcb_view.png",
+      compare: "compare_plot.png",
+      report: "cutoff_report.txt"
+    };
+    let designs = [];
+    let selectedDesignFolder = "";
+    let followLatestDesign = true;
+
+    function cacheBust(url) {
+      return `${url}?t=${Date.now()}`;
+    }
+
+    function outputUrl(filename, folder = selectedDesignFolder) {
+      const encodedFile = encodeURIComponent(filename);
+      if (!folder) return `${API_BASE}/outputs/${encodedFile}`;
+      return `${API_BASE}/outputs/${encodeURIComponent(folder)}/${encodedFile}`;
+    }
+
+    function formatDesignLabel(design) {
+      const date = design.date ? design.date.replace("T", " ").slice(0, 16) : "unknown date";
+      return `${design.circuit_type || "DESIGN"} ${design.fc || ""}Hz — ${date}`;
+    }
+
+    function updateArtifactLabels() {
+      const prefix = selectedDesignFolder ? `/outputs/${selectedDesignFolder}` : "/outputs";
+      document.getElementById("bode-path").textContent = `${prefix}/${OUTPUT_FILES.bode}`;
+      document.getElementById("wave-path").textContent = `${prefix}/${OUTPUT_FILES.wave}`;
+      document.getElementById("pcb-path").textContent = `${prefix}/${OUTPUT_FILES.pcb}`;
+      document.getElementById("compare-path").textContent = `${prefix}/${OUTPUT_FILES.compare}`;
+      document.getElementById("report-path").textContent = selectedDesignFolder
+        ? `GET ${prefix}/${OUTPUT_FILES.report}`
+        : "GET /report";
+    }
+
+    async function refreshDesigns(options = {}) {
+      const select = document.getElementById("design-select");
+      try {
+        const response = await fetch(`${API_BASE}/designs?t=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        designs = Array.isArray(data.designs) ? data.designs : [];
+
+        select.innerHTML = "";
+        if (!designs.length) {
+          const option = document.createElement("option");
+          option.value = "";
+          option.textContent = "No design folders found — showing latest root outputs";
+          select.appendChild(option);
+          selectedDesignFolder = "";
+          followLatestDesign = true;
+          updateArtifactLabels();
+          return;
+        }
+
+        for (const design of designs) {
+          const option = document.createElement("option");
+          option.value = design.folder;
+          option.textContent = formatDesignLabel(design);
+          select.appendChild(option);
+        }
+
+        const latestFolder = designs[0].folder;
+        const selectionExists = designs.some((design) => design.folder === selectedDesignFolder);
+        const shouldUseLatest = options.preferLatest || followLatestDesign || !selectionExists;
+        selectedDesignFolder = shouldUseLatest ? latestFolder : selectedDesignFolder;
+        followLatestDesign = selectedDesignFolder === latestFolder;
+        select.value = selectedDesignFolder;
+        updateArtifactLabels();
+      } catch (error) {
+        select.innerHTML = "";
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = `Could not load /designs — ${error}`;
+        select.appendChild(option);
+        selectedDesignFolder = "";
+        followLatestDesign = true;
+        updateArtifactLabels();
+      }
+    }
+
+    async function refreshHealth() {
+      const node = document.getElementById("api-status");
+      try {
+        const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
+        const data = await response.json();
+        node.textContent = `${data.status} v${data.version}`;
+        node.style.color = "var(--green-hot)";
+      } catch (error) {
+        node.textContent = "offline";
+        node.style.color = "var(--red)";
+      }
+    }
+
+    function refreshImages() {
+      const artifacts = [
+        ["bode-img", outputUrl(OUTPUT_FILES.bode)],
+        ["wave-img", outputUrl(OUTPUT_FILES.wave)],
+        ["pcb-img", outputUrl(OUTPUT_FILES.pcb)],
+        ["compare-img", outputUrl(OUTPUT_FILES.compare)]
+      ];
+      for (const [id, url] of artifacts) {
+        const img = document.getElementById(id);
+        const scope = img.closest("[data-scope]");
+        img.onload = () => scope.classList.remove("is-missing");
+        img.onerror = () => scope.classList.add("is-missing");
+        img.src = cacheBust(url);
+      }
+    }
+
+    async function refreshReport() {
+      const reportText = document.getElementById("report-text");
+      try {
+        const url = selectedDesignFolder ? outputUrl(OUTPUT_FILES.report) : `${API_BASE}/report`;
+        const response = await fetch(cacheBust(url), { cache: "no-store" });
+        reportText.textContent = await response.text();
+      } catch (error) {
+        reportText.textContent = `Could not load report for selected design\n${error}`;
+      }
+    }
+
+    function refreshTimestamp() {
+      const stamp = new Date().toLocaleString();
+      document.getElementById("last-updated").textContent = `Last updated: ${stamp}`;
+    }
+
+    async function refreshAll() {
+      refreshHealth();
+      await refreshDesigns();
+      refreshImages();
+      refreshReport();
+      refreshTimestamp();
+    }
+
+    async function submitDesign(event) {
+      event.preventDefault();
+      const prompt = document.getElementById("prompt").value.trim();
+      const output = document.getElementById("design-output");
+      const button = document.getElementById("design-button");
+      if (!prompt) {
+        output.textContent = "Enter a circuit prompt first.";
+        return;
+      }
+
+      output.textContent = `> /volta ${prompt}\n\n`;
+      button.disabled = true;
+      try {
+        const response = await fetch(`${API_BASE}/design`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+        if (!response.ok || !response.body) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          output.textContent += decoder.decode(value, { stream: true });
+          output.scrollTop = output.scrollHeight;
+        }
+        await refreshDesigns({ preferLatest: true });
+        refreshImages();
+        refreshReport();
+        refreshTimestamp();
+      } catch (error) {
+        output.textContent += `\n[dashboard error] ${error}\n`;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.getElementById("design-form").addEventListener("submit", submitDesign);
+    document.getElementById("design-select").addEventListener("change", (event) => {
+      selectedDesignFolder = event.target.value;
+      followLatestDesign = designs.length > 0 && selectedDesignFolder === designs[0].folder;
+      updateArtifactLabels();
+      refreshImages();
+      refreshReport();
+      refreshTimestamp();
+    });
+    refreshAll();
+    setInterval(refreshAll, REFRESH_MS);
+  </script>
+</body>
+</html>

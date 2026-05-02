@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png binary
+*.zip binary
+*.kicad_pcb text eol=lf
+*.net text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf

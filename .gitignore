@@ -1,0 +1,27 @@
+*.erc
+*.log
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local/generated artifacts
+outputs/
+gerbers/
+*.kicad_pcb
+*.net
+*.zip
+
+# Local environments and vendored agent checkout
+.venv/
+hermes-agent/
+.hermes/
+.env
+MEMORY.md
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

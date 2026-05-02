@@ -1,0 +1,27 @@
+{
+  "title": "example_rc_lowpass",
+  "measure": {
+    "node": "out",
+    "source": "V1"
+  },
+  "components": [
+    {
+      "kind": "V",
+      "name": "V1",
+      "nodes": ["in", "0"],
+      "value": 1
+    },
+    {
+      "kind": "R",
+      "name": "R1",
+      "nodes": ["in", "out"],
+      "value": "1k"
+    },
+    {
+      "kind": "C",
+      "name": "C1",
+      "nodes": ["out", "0"],
+      "value": "100n"
+    }
+  ]
+}
