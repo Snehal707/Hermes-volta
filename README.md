@@ -6,6 +6,36 @@ Hermes Volta turns a plain-English filter request into computed component values
 
 > Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
 
+## Hermes Agent Skills And Tools
+
+Hermes Volta is designed as a Hermes Agent capability showcase. The circuit pipeline is only one layer; the demo also exercises Hermes skills, memory, messaging, multimodal input, scheduling, background execution, and tool-driven engineering work.
+
+### Hermes Skills
+
+| Skill / capability | What it does in Volta |
+| --- | --- |
+| Volta skill | `skills/volta/SKILL.md` defines the analog design workflow, safety rules, Telegram delivery gate, and learning behavior. |
+| Skill references | `filter_math.md`, `kicad_footprints.md`, `component_recipes.md`, and `extended_docs.md` give reusable circuit math, EDA guidance, and process rules. |
+| Skill growth | The agent updates skill/reference guidance when a design reveals a durable workflow improvement. |
+| Memory | Verified recipes are saved so future requests can reuse known-good component values and simulation results. |
+| Session search | Prior designs can be recalled and scaled, for example taking the most accurate design and retargeting it to 8 kHz. |
+| Context references | Prompts such as `@MEMORY.md which design should I use for a guitar pedal?` use project context directly. |
+
+### Hermes Tools
+
+| Tool / surface | What it does in Volta |
+| --- | --- |
+| `execute_code` / terminal | Runs PySpice, Ngspice, KiCad CLI, E24 sweeps, Monte Carlo checks, and report generation. |
+| `send_message` | Delivers summaries, plots, reports, Gerbers, and engineering notes to Telegram. |
+| Voice mode | Telegram voice prompts can trigger circuit generation. |
+| Vision analysis | Hand-drawn schematic photos can be interpreted and mapped to supported circuit types. |
+| Web search / Firecrawl | Autonomous mode researches project domains such as ECG, drone vibration, or guitar pedal filtering. |
+| Cron jobs | BOM checks can be scheduled, such as weekly JLCPCB/LCSC review. |
+| Background sessions | Longer designs can run without blocking the chat. |
+| Rollback / history | Previous designs can be restored for comparison or recovery. |
+| RL trajectory logging | `tools/rl_trajectory.py` records learned design trajectories under `outputs/trajectories/`. |
+| Dashboard/API | FastAPI dashboard streams pipeline progress and serves an OpenAI-compatible `/v1` endpoint. |
+
 ## Why It Matters
 
 Most AI circuit demos stop at explanation. Hermes Volta produces artifacts an engineer can inspect:
@@ -18,6 +48,12 @@ Most AI circuit demos stop at explanation. Hermes Volta produces artifacts an en
 - Telegram delivery and an OpenAI-compatible dashboard API
 
 ## Hackathon Demo Flow
+
+The submitted demo video shows CLI, Telegram, and dashboard surfaces:
+
+- CLI: skills, learning loop, batch design, delegation, memory/session search, autonomous web search, context references, RL trajectories, and skill-file growth.
+- Telegram: voice, vision, autonomous mode, cron scheduling, background design, PCB render, and rollback.
+- Dashboard: live run design, four artifact panels, design history navigation, and streamed Hermes progress.
 
 1. Open the live dashboard at `http://localhost:8765`.
 2. Enter a prompt such as:
@@ -158,7 +194,7 @@ The `/design` endpoint streams deterministic Volta pipeline progress directly to
 
 ## Kimi Track Note
 
-Hermes Volta is model-agnostic through Hermes Agent. To qualify for the Kimi track, run the demo with Hermes Agent configured to use a Kimi model and show that model selection in the submission video. The circuit pipeline itself remains deterministic and auditable.
+Hermes Volta is model-agnostic through Hermes Agent. The hackathon demo was run with **Kimi K2.6**, while the circuit pipeline itself remains deterministic and auditable.
 
 ## Validation Status
 
