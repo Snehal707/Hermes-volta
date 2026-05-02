@@ -4,6 +4,12 @@
 
 Hermes Volta is a submission for **The Hermes Agent Creative Hackathon by Nous Research**. The project demonstrates Hermes Agent in a creative engineering domain: turning plain-English analog circuit intent into simulated waveforms, Bode plots, KiCad-compatible artifacts, Gerbers, reports, Telegram delivery, and a live dashboard.
 
+## Demo Video
+
+[![Hermes Volta demo video thumbnail](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
+
+Watch: https://youtu.be/Qx1U6dPjKfs
+
 ## One-Line Pitch
 
 Hermes Volta turns natural language into verified analog circuit artifacts: simulation plots, KiCad-compatible EDA files, Gerbers, reports, Telegram delivery, and a live dashboard, powered by Hermes Agent skills, memory, tools, and Kimi K2.6.

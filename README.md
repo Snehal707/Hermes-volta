@@ -6,6 +6,12 @@ Hermes Volta turns a plain-English filter request into computed component values
 
 **Built for The Hermes Agent Creative Hackathon by Nous Research.** This repository is a hackathon submission showing Hermes Agent pushed into an engineering/creative software domain: analog circuit design from natural language, multimodal Telegram control, live dashboard streaming, memory, skills, web search, scheduling, and generated EDA artifacts.
 
+## Demo Video
+
+[![Hermes Volta demo video thumbnail](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
+
+Watch the hackathon demo: https://youtu.be/Qx1U6dPjKfs
+
 > Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
 
 ## Architecture
