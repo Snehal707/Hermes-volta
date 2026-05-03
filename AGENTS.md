@@ -22,6 +22,7 @@ Hermes Volta is a circuit design agent built on Hermes Agent. It converts plain-
 
 ## Environment
 
+- `hermes-agent/`: pinned **git submodule** of [Hermes Agent](https://github.com/NousResearch/hermes-agent). Prefer `git clone --recurse-submodules …`, or later `git submodule update --init --recursive`. Populate Hermes' own `.venv/` per upstream README; submodule source is tracked, local venvs are not.
 - Runtime: Hermes Agent
 - OS target: WSL2
 - Circuit simulation: PySpice + Ngspice
@@ -59,6 +60,7 @@ Hermes Volta is a circuit design agent built on Hermes Agent. It converts plain-
 
 ## Key Files
 
+- `hermes-agent/`: Submodule checkout used for full Hermes runtime + optional `hermes-agent/.venv/bin/python3` interpreter.
 - `sim/simulate.py`: PySpice + Ngspice headless simulation engine. Builds supported circuits, runs AC/transient analysis, writes Bode and waveform PNGs, returns `actual_fc`, `bode_path`, and `wave_path`.
 - `sim/netlist.py`: KiCad netlist generator. Tries SKiDL first, falls back to manual KiCad legacy `.net`, supports JLCPCB 0402 footprints, writes `outputs/circuit.net`.
 - `sim/pcb_export.py`: Headless KiCad export wrapper. Uses `kicad-cli` via subprocess to create `outputs/circuit.kicad_pcb`, `outputs/pcb_view.png`, `outputs/gerbers/`, and `outputs/gerbers.zip`; returns `None` gracefully if KiCad is unavailable.

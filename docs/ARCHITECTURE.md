@@ -78,18 +78,21 @@ flowchart TB
 
 ## Where Hermes Agent Lives
 
-The local development machine has a `hermes-agent/` directory at the repo root:
+The repo includes `hermes-agent/` at the root as a **git submodule** ([NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)):
 
 ```text
 /path/to/hermes-volta/hermes-agent/
 ```
 
-Set ``VOLTA_PROJECT_ROOT`` when your clone differs. That directory is intentionally not committed. It is ignored by `.gitignore` because it is the external Hermes Agent runtime checkout and virtual environment, not source code owned by Hermes Volta.
+After clone, populate it with **`git submodule update --init --recursive`** (or clone with **`--recurse-submodules`**).
 
-The public repo shows the Hermes Agent integration points instead:
+Set ``VOLTA_PROJECT_ROOT`` when your checkout path is nonstandard. **`hermes-agent/.venv/`** is local Hermes/Python environment state and stays **untracked**; only the submodule commit pointer lives in Hermes Volta.
+
+Volta integrates with Hermes through:
 
 | Repo path | Role |
 | --- | --- |
+| `hermes-agent/` | Upstream Hermes Agent sources (pinned submodule revision). Install Hermes/Python env per upstream docs inside this directory. |
 | `skills/volta/SKILL.md` | The Hermes skill that teaches the agent how to design, simulate, verify, export, deliver, and remember Volta circuits. |
 | `skills/volta/references/` | Durable circuit math, footprint rules, component recipes, and extended workflow docs loaded by the Volta skill. |
 | `sim/faraday_pipeline.py` | Main Hermes `execute_code` target for a full design run. |

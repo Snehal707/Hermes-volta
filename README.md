@@ -140,7 +140,21 @@ Public demo docs:
 
 ### Where Hermes Agent Is
 
-`hermes-agent/` is the local Hermes Agent runtime checkout used during development and demos. It is intentionally ignored by git because it is a large external runtime/dependency, not Volta source code. The repo integrates with Hermes Agent through:
+`hermes-agent/` is a **[git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules)** that pins **[Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent)** next to Volta sources. Hermes-local virtual environments under `hermes-agent/.venv/` stay untracked (see root `.gitignore`).
+
+Bring it in after **clone**:
+
+```bash
+git clone --recurse-submodules <repo-url>
+```
+
+Or on an existing clone:
+
+```bash
+git submodule update --init --recursive
+```
+
+The repo integrates with Hermes Agent through:
 
 - `skills/volta/SKILL.md` and `skills/volta/references/`
 - Hermes tool calls such as `execute_code`, `send_message`, cron, background sessions, rollback, memory, and session search
@@ -252,8 +266,9 @@ Generated boards are starting points for engineering review, not production-appr
 ```text
 docs/             Architecture, hackathon, and demo notes
 docs/demo_artifacts/
-                Curated demo images for GitHub browsing
+                  Curated demo images for GitHub browsing
 dashboard/       FastAPI dashboard and live artifact UI
+hermes-agent/    Hermes Agent (git submodule → NousResearch/hermes-agent)
 sim/             Simulation, netlist, PCB export, report, compare plots
 skills/volta/    Hermes Agent skill and references
 tests/           Smoke test suite
@@ -267,7 +282,9 @@ requirements.txt Pinned pip dependencies (dashboard + simulation stack)
 Designed for Linux, macOS, or **WSL2** with Ngspice and optionally KiCad CLI. Python packages are pinned in [`requirements.txt`](requirements.txt). [`skills/volta/scripts/install_deps.sh`](skills/volta/scripts/install_deps.sh) installs system deps where it can (apt/brew), creates `./.venv`, and pip-installs Volta stacks. Override `VOLTA_PROJECT_ROOT` only if paths are unconventional; use `VOLTA_PYTHON` only if plain `python3` is not the interpreter you populated.
 
 ```bash
+git clone --recurse-submodules https://github.com/Snehal707/Hermes-volta.git hermes-volta
 cd hermes-volta
+# If you cloned without --recurse-submodules: git submodule update --init --recursive
 bash skills/volta/scripts/install_deps.sh
 python3 dashboard/api.py
 ```
@@ -283,7 +300,9 @@ http://localhost:8765
 For a fresh install on another machine:
 
 ```bash
+git clone --recurse-submodules https://github.com/Snehal707/Hermes-volta.git hermes-volta
 cd hermes-volta
+git submodule update --init --recursive
 bash skills/volta/scripts/install_deps.sh
 ```
 

@@ -15,9 +15,8 @@ gerbers/
 *.net
 *.zip
 
-# Local environments and vendored agent checkout
+# Local environments (Hermes Agent is a git submodule at hermes-agent/)
 .venv/
-hermes-agent/
 .hermes/
 .env
 MEMORY.md

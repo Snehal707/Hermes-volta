@@ -10,13 +10,13 @@ Hermes Volta is a circuit design agent built on Hermes Agent. It converts plain-
 
 Hermes Agent is the orchestration/runtime layer. Hermes Volta is the project-specific domain layer.
 
-The local development checkout may contain:
+The checkout includes:
 
 ```text
 hermes-agent/
 ```
 
-That directory is intentionally not committed. It is an external runtime checkout and virtual environment, not source code owned by this repo.
+as a **git submodule** for [Nous Research Hermes Agent](https://github.com/NousResearch/hermes-agent). Use **`git submodule update --init --recursive`** on clone. **`hermes-agent/.venv/`** stays local/untracked alongside Volta's own `.venv/` (see root `.gitignore`).
 
 ## Key Integration Points
 
@@ -38,7 +38,7 @@ That directory is intentionally not committed. It is an external runtime checkou
 - Circuit simulation: PySpice + Ngspice.
 - EDA/export: KiCad CLI when available.
 - Generated artifacts go under `outputs/`.
-- `outputs/`, local memory, logs, virtual environments, and `hermes-agent/` are ignored by git.
+- `outputs/`, MEMORY.md, `.env`/logs, `.venv/` (Volta root and under `hermes-agent/`), and similar local env dirs stay git-ignored; `hermes-agent/` Hermes Agent **sources** are tracked via submodule revision.
 
 ## Public Repo Discipline
 
