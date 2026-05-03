@@ -366,6 +366,19 @@ The `/design` endpoint streams deterministic Volta pipeline progress directly to
 
 Hermes Volta is model-agnostic through Hermes Agent. The hackathon demo was run with **Kimi K2.6**, while the circuit pipeline itself remains deterministic and auditable.
 
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Agent Runtime | Hermes Agent by Nous Research |
+| LLM | Kimi K2.6 by Moonshot AI |
+| Circuit Simulation | PySpice + Ngspice |
+| EDA / PCB | KiCad + kicad-cli + SKiDL |
+| Dashboard | FastAPI + Matplotlib |
+| Delivery | Telegram Bot API |
+| Web Search | Firecrawl |
+| Language | Python 3.11+ |
+
 ## Validation Status
 
 Recent local smoke tests passed `13/13`, covering simulation, batch runs, optimizer, Monte Carlo, compare plot, netlist generation, PCB export, report generation, Telegram delivery, math accuracy, and Firecrawl availability.
