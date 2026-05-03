@@ -75,7 +75,7 @@ Hermes Volta is a circuit design agent built on Hermes Agent. It converts plain-
 - `skills/volta/references/kicad_footprints.md`: Preferred JLCPCB/KiCad footprints and two-layer PCB design rules.
 - `skills/volta/scripts/install_deps.sh`: Linux/macOS setup script for Ngspice, KiCad, Python dependencies, outputs directory, and Hermes skill copy.
 - `outputs/`: Generated simulation plots, reports, netlists, PCB previews, and Gerbers.
-- `tools/`: Future helper tools for supplier checks, automation, and integrations.
+- `tools/`: Current utility tools: `check_bom_prices.py`, `component_search.py`, `webhook.py`, `submit_trajectory.py`, `rl_trajectory.py` (supplier/BOM helpers, integrations, trajectory logging/submission).
 
 ## Hermes Features Used
 
