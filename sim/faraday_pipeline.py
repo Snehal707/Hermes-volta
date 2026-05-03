@@ -14,6 +14,16 @@ warnings.filterwarnings("ignore", message=".*fp-lib-table.*")
 warnings.filterwarnings("ignore", message=".*KICAD.*SYMBOL.*")
 warnings.filterwarnings("ignore", message=".*symbol libraries.*")
 
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
+
+from sim.volta_paths import preferred_python_exe, prepend_sim_import_helpers, project_root_path
+
+prepend_sim_import_helpers()
+PROJECT_ROOT_PATH = project_root_path()
+HERMES_VENV_PYTHON = preferred_python_exe(PROJECT_ROOT_PATH)
+
 KICAD_SYMBOL_DIR = "/usr/share/kicad/symbols"
 for _symbol_env in (
     "KICAD_SYMBOL_DIR",
@@ -24,20 +34,6 @@ for _symbol_env in (
     "KICAD9_SYMBOL_DIR",
 ):
     os.environ.setdefault(_symbol_env, KICAD_SYMBOL_DIR)
-
-# Add venv site-packages to path so execute_code can find packages
-VENV_SITE_PACKAGES = "/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/lib/python3.11/site-packages"
-if VENV_SITE_PACKAGES not in sys.path:
-    sys.path.insert(0, VENV_SITE_PACKAGES)
-
-# Also add project root
-PROJECT_ROOT = "/mnt/c/Users/ASUS/HermesVolta"
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
-
-PROJECT_ROOT_PATH = Path(PROJECT_ROOT)
-HERMES_VENV_PYTHON = PROJECT_ROOT_PATH / "hermes-agent" / ".venv" / "bin" / "python3"
 
 
 def _ensure_venv_python_for_terminal() -> None:

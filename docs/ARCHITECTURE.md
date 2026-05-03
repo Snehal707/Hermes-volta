@@ -83,10 +83,10 @@ flowchart TD
 The local development machine has a `hermes-agent/` directory at the repo root:
 
 ```text
-/mnt/c/Users/ASUS/HermesVolta/hermes-agent/
+/path/to/hermes-volta/hermes-agent/
 ```
 
-That directory is intentionally not committed. It is ignored by `.gitignore` because it is the external Hermes Agent runtime checkout and virtual environment, not source code owned by Hermes Volta.
+Set ``VOLTA_PROJECT_ROOT`` when your clone differs. That directory is intentionally not committed. It is ignored by `.gitignore` because it is the external Hermes Agent runtime checkout and virtual environment, not source code owned by Hermes Volta.
 
 The public repo shows the Hermes Agent integration points instead:
 

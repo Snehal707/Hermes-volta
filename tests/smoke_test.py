@@ -12,9 +12,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 
-PROJECT_ROOT = Path("/mnt/c/Users/ASUS/HermesVolta")
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
+
+from sim.volta_paths import prepend_sim_import_helpers, project_root_path
+
+prepend_sim_import_helpers()
+PROJECT_ROOT = project_root_path()
 
 RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 SMOKE_ROOT = PROJECT_ROOT / "outputs" / "smoke_test" / RUN_ID

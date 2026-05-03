@@ -43,14 +43,15 @@ Volta turns plain-English analog circuit requests into computed values, PySpice/
 2. If the user describes a project without `fc`, use Autonomous Design Mode: search typical signal frequency range and common supply voltage, choose circuit type, target `fc`, and supply voltage, explain the choice, then run the pipeline without asking for component values.
 3. Check memory and session history for verified recipes with the same topology, similar frequency decade, footprint, and component source.
 4. Compute first-pass values using the circuit equation; prefer E24 resistor values for practical RC filters.
-5. Run the Faraday pipeline with the required interpreter:
+5. Run the Faraday pipeline from the repo root with a Python that has PySpice (Hermes-Agent venv, repo `.venv` from `install_deps.sh`, or explicit `VOLTA_PYTHON`):
 
 ```bash
-PYTHON=/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/bin/python3
-$PYTHON -c "from sim.faraday_pipeline import run; result = run(...); print(result)"
+export VOLTA_PROJECT_ROOT="$(pwd)"
+PYTHON="${VOLTA_PYTHON:-hermes-agent/.venv/bin/python3}"
+"$PYTHON" -c "from sim.faraday_pipeline import run; result = run(...); print(result)"
 ```
 
-6. Never use plain `python3` or `/usr/bin/python3` for Volta sim scripts.
+6. Do not rely on distro `python3` or `/usr/bin/python3` unless PySpice imports succeed on that interpreter.
 7. Verify `actual_fc`, error percentage, pass/fail, Bode plot, transient plot, report, PCB preview, Gerbers, and `compare_plot.png`.
 8. Save a concise verified recipe to `MEMORY.md` after successful verification.
 9. Patch this skill or reference docs only when the design reveals a durable workflow improvement.

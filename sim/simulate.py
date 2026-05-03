@@ -6,23 +6,21 @@ dark-theme plots to ``./outputs/``, and returns the key artifact paths.
 """
 
 import sys
+from pathlib import Path
 
-# Add venv site-packages to path so execute_code can find packages
-VENV_SITE_PACKAGES = "/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/lib/python3.11/site-packages"
-if VENV_SITE_PACKAGES not in sys.path:
-    sys.path.insert(0, VENV_SITE_PACKAGES)
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
 
-# Also add project root
-PROJECT_ROOT = "/mnt/c/Users/ASUS/HermesVolta"
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+from sim.volta_paths import prepend_sim_import_helpers  # noqa: E402
+
+prepend_sim_import_helpers()
 
 import argparse  # noqa: E402
 import json  # noqa: E402
 import logging  # noqa: E402
 import math  # noqa: E402
 from dataclasses import dataclass  # noqa: E402
-from pathlib import Path  # noqa: E402
 from typing import Any, Literal  # noqa: E402
 
 Topology = Literal["RC_LOWPASS", "RC_HIGHPASS", "RLC_BANDPASS", "RLC_NOTCH", "RL_LOWPASS"]

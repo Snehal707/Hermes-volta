@@ -14,6 +14,22 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
+
+from sim.volta_paths import preferred_python_exe, prepend_sim_import_helpers, project_root_path
+
+prepend_sim_import_helpers()
+PROJECT_ROOT = project_root_path()
+OUTPUTS_DIR = PROJECT_ROOT / "outputs"
+DASHBOARD_DIR = PROJECT_ROOT / "dashboard"
+PROJECT_MEMORY = PROJECT_ROOT / "MEMORY.md"
+GLOBAL_MEMORY = Path.home() / ".hermes" / "memories" / "MEMORY.md"
+REPORT_PATH = OUTPUTS_DIR / "cutoff_report.txt"
+AUDIT_LOG_PATH = OUTPUTS_DIR / "volta_audit.log"
+VENV_PYTHON = preferred_python_exe(PROJECT_ROOT)
+
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,17 +39,6 @@ from pydantic import BaseModel
 
 
 VERSION = "1.0.0"
-PROJECT_ROOT = Path("/mnt/c/Users/ASUS/HermesVolta")
-OUTPUTS_DIR = PROJECT_ROOT / "outputs"
-DASHBOARD_DIR = PROJECT_ROOT / "dashboard"
-PROJECT_MEMORY = PROJECT_ROOT / "MEMORY.md"
-GLOBAL_MEMORY = Path.home() / ".hermes" / "memories" / "MEMORY.md"
-REPORT_PATH = OUTPUTS_DIR / "cutoff_report.txt"
-AUDIT_LOG_PATH = OUTPUTS_DIR / "volta_audit.log"
-VENV_PYTHON = PROJECT_ROOT / "hermes-agent" / ".venv" / "bin" / "python3"
-
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 
 app = FastAPI(title="Hermes Volta Control Panel", version=VERSION)

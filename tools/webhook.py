@@ -14,8 +14,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
 
-PROJECT_ROOT = Path("/mnt/c/Users/ASUS/HermesVolta")
+from sim.volta_paths import project_root_path
+
+PROJECT_ROOT = project_root_path()
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 ENV_PATHS = [PROJECT_ROOT / ".env", Path.home() / ".hermes" / ".env"]
 LOG_PATH = OUTPUTS_DIR / "webhook.log"

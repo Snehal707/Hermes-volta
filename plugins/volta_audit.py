@@ -20,7 +20,19 @@ from pathlib import Path
 from typing import Any
 
 
-PROJECT_ROOT = Path(os.getenv("VOLTA_PROJECT_ROOT", "/mnt/c/Users/ASUS/HermesVolta"))
+def _detect_audit_project_root() -> Path:
+    for key in ("VOLTA_PROJECT_ROOT", "HERMES_VOLTA_ROOT"):
+        raw = os.environ.get(key)
+        if raw:
+            return Path(raw).expanduser().resolve()
+    here = Path(__file__).resolve()
+    candidate = here.parent.parent
+    if (candidate / "sim" / "faraday_pipeline.py").is_file():
+        return candidate
+    return Path.cwd().resolve()
+
+
+PROJECT_ROOT = _detect_audit_project_root()
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
 AUDIT_LOG = OUTPUT_DIR / "volta_audit.log"
 _LOCK = threading.Lock()

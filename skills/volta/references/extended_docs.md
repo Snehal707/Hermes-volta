@@ -174,7 +174,8 @@ Use the Faraday pipeline in a single `execute_code` turn:
 When running sim scripts via terminal tool, ALWAYS use:
 
 ```bash
-PYTHON=/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/bin/python3
+export VOLTA_PROJECT_ROOT="${VOLTA_PROJECT_ROOT:-$(pwd)}"
+PYTHON="${VOLTA_PYTHON:-$VOLTA_PROJECT_ROOT/hermes-agent/.venv/bin/python3}"
 $PYTHON -c "from sim.faraday_pipeline import run; ..."
 ```
 
@@ -712,7 +713,8 @@ cron:
   schedule: "0 9 * * MON"
   task: |
     cd ~/hermes-volta
-    PYTHON=/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/bin/python3
+    export VOLTA_PROJECT_ROOT="${VOLTA_PROJECT_ROOT:-$(pwd)}"
+    PYTHON="${VOLTA_PYTHON:-$VOLTA_PROJECT_ROOT/hermes-agent/.venv/bin/python3}"
     $PYTHON tools/check_bom_prices.py
     hermes telegram send "Volta weekly BOM check complete. Review outputs/bom_status.txt"
 ```
@@ -773,10 +775,11 @@ bash skills/volta/scripts/install_deps.sh
 Then run a smoke test:
 
 ```bash
-PYTHON=/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/bin/python3
+export VOLTA_PROJECT_ROOT="${VOLTA_PROJECT_ROOT:-$(pwd)}"
+PYTHON="${VOLTA_PYTHON:-$VOLTA_PROJECT_ROOT/hermes-agent/.venv/bin/python3}"
 $PYTHON - <<'PY'
 from sim.faraday_pipeline import run
-print(run("RC_LOWPASS", R=1600, C=1e-7, supply_v=5.0, L=1e-2, fc=1000, description="smoke test"))
+print(run("RC_LOWPASS", R=1600, C=1e-7, supply_v=5.0, L=None, fc=1000, description="smoke test"))
 PY
 ```
 

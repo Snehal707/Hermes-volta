@@ -20,6 +20,20 @@ Judges can open the hosted GitHub Pages dashboard to browse saved design history
 
 > Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
 
+## Screenshots
+
+### Dashboard
+
+![Hermes Volta dashboard screenshot](docs/screenshots/dashboard.png)
+
+### Telegram Delivery
+
+![Hermes Volta Telegram delivery screenshot](docs/screenshots/telegram-delivery.png)
+
+### VOLTA Banner CLI
+
+![Hermes Volta CLI banner screenshot](docs/screenshots/volta-cli-banner.png)
+
 ## Architecture
 
 Hermes Volta runs on top of Hermes Agent. Hermes Agent is the runtime/orchestrator; this repository contains the Volta skill, simulation pipeline, dashboard, tests, and helper tools.
@@ -180,24 +194,35 @@ Generated boards are starting points for engineering review, not production-appr
 ```text
 docs/             Architecture, hackathon, and demo notes
 docs/demo_artifacts/
-                 Curated demo images for GitHub browsing
+                Curated demo images for GitHub browsing
 docs/demo-dashboard/
-                 Static backend-free dashboard snapshot
-dashboard/        FastAPI dashboard and live artifact UI
-sim/              Simulation, netlist, PCB export, report, compare plots
-skills/volta/     Hermes Agent skill and references
-tests/            Smoke test suite
-tools/            Trajectory, webhook, BOM helper tools
-outputs/          Generated artifacts, ignored by git
+                Static backend-free dashboard snapshot
+dashboard/       FastAPI dashboard and live artifact UI
+sim/             Simulation, netlist, PCB export, report, compare plots
+skills/volta/    Hermes Agent skill and references
+tests/           Smoke test suite
+tools/           Trajectory, webhook, BOM helper tools
+outputs/         Generated artifacts, ignored by git
+requirements.txt Pinned pip dependencies (dashboard + simulation stack)
 ```
 
 ## Quick Start
 
-This project was developed under WSL2. For the checked-in project path, use the package-complete venv:
+This project targets WSL2 or Linux/macOS with Ngspice and KiCad CLI available. Dependencies are pinned in [`requirements.txt`](requirements.txt). Set `VOLTA_PROJECT_ROOT` to the repo if you symlink or relocate the checkout; optionally set `VOLTA_PYTHON` to your interpreter (Hermes-Agent venv, `./.venv` from `install_deps.sh`, etc.).
 
 ```bash
 cd hermes-volta
-./hermes-agent/.venv/bin/python3 dashboard/api.py
+bash skills/volta/scripts/install_deps.sh   # KiCad/ngspice (where available) + .venv + requirements.txt
+source .venv/bin/activate
+python dashboard/api.py
+```
+
+If you already have a Hermes-Agent checkout with packages, override the interpreter instead:
+
+```bash
+cd hermes-volta
+VOLTA_PYTHON="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"
+"$VOLTA_PYTHON" dashboard/api.py
 ```
 
 Open:
@@ -223,10 +248,11 @@ bash skills/volta/scripts/install_deps.sh
 
 ## Run The Pipeline Directly
 
-Use the Hermes Volta venv for simulation scripts:
+Use PySpice-capable interpreter (`VOLTA_PYTHON`, or `./hermes-agent/.venv/bin/python3`, or `./.venv/bin/python3`):
 
 ```bash
-./hermes-agent/.venv/bin/python3 - <<'PY'
+PY="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"
+"$PY" - <<'PY'
 from sim.faraday_pipeline import run
 
 result = run(
@@ -244,22 +270,24 @@ PY
 
 ## Useful Commands
 
+Set `PY` once: `PY="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"`.
+
 E24 resistor sweep:
 
 ```bash
-./hermes-agent/.venv/bin/python3 sim/sweep_optimizer.py --fc 1000 --C 1e-7
+$PY sim/sweep_optimizer.py --fc 1000 --C 1e-7
 ```
 
 Monte Carlo tolerance check:
 
 ```bash
-./hermes-agent/.venv/bin/python3 sim/monte_carlo.py --R 1600 --C 1e-7 --fc 1000 --n 1000
+$PY sim/monte_carlo.py --R 1600 --C 1e-7 --fc 1000 --n 1000
 ```
 
 Full smoke test:
 
 ```bash
-./hermes-agent/.venv/bin/python3 tests/smoke_test.py
+$PY tests/smoke_test.py
 ```
 
 ## Dashboard API

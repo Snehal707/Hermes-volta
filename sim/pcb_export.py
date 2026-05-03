@@ -1,25 +1,22 @@
 """Headless KiCad PCB export helpers for Hermes Volta."""
 
 import sys
-import os
-
-# Add venv site-packages to path so execute_code can find packages
-VENV_SITE_PACKAGES = "/mnt/c/Users/ASUS/HermesVolta/hermes-agent/.venv/lib/python3.11/site-packages"
-if VENV_SITE_PACKAGES not in sys.path:
-    sys.path.insert(0, VENV_SITE_PACKAGES)
-
-# Also add project root
-PROJECT_ROOT = "/mnt/c/Users/ASUS/HermesVolta"
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
-import shutil
-import subprocess
-import zipfile
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
-from xml.etree import ElementTree as ET
+
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
+
+from sim.volta_paths import prepend_sim_import_helpers  # noqa: E402
+
+prepend_sim_import_helpers()
+
+import shutil  # noqa: E402
+import subprocess  # noqa: E402
+import zipfile  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any  # noqa: E402
+from xml.etree import ElementTree as ET  # noqa: E402
 
 
 OUTPUT_DIR = Path("outputs")

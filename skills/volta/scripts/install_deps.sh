@@ -55,7 +55,7 @@ fi
 source "$VENV_DIR/bin/activate"
 
 python -m pip install --upgrade pip setuptools wheel
-python -m pip install "numpy<2" matplotlib PySpice skidl requests
+python -m pip install -r "$ROOT/requirements.txt"
 
 mkdir -p outputs
 mkdir -p "$HOME/.hermes/skills"
@@ -76,7 +76,7 @@ Next steps:
   3. Run a Volta pipeline smoke test:
      python - <<'PY'
 from sim.faraday_pipeline import run
-print(run("RC_LOWPASS", R=1600, C=1e-7, supply_v=5.0, L=1e-2, fc=1000, description="install smoke test"))
+print(run("RC_LOWPASS", R=1600, C=1e-7, supply_v=5.0, L=None, fc=1000, description="install smoke test"))
 PY
 
 Skill copied to ~/.hermes/skills/volta

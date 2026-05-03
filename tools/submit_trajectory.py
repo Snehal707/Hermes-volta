@@ -6,10 +6,16 @@ import argparse
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
 
-PROJECT_ROOT = Path("/mnt/c/Users/ASUS/HermesVolta")
+from sim.volta_paths import project_root_path
+
+PROJECT_ROOT = project_root_path()
 TRAJECTORY_DIR = PROJECT_ROOT / "outputs" / "trajectories"
 BUNDLE_PATH = PROJECT_ROOT / "outputs" / "trajectories_bundle.jsonl"
 

@@ -1,20 +1,21 @@
 """Generate explanatory input/output comparison plots for Hermes Volta designs."""
 
 import argparse
-import sys
 import math
 import shutil
+import sys
 import textwrap
 from pathlib import Path
 from typing import Any
 
+_REPO_BOOT = Path(__file__).resolve().parents[1]
+if str(_REPO_BOOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_BOOT))
 
-PROJECT_ROOT = Path("/mnt/c/Users/ASUS/HermesVolta")
-VENV_SITE_PACKAGES = PROJECT_ROOT / "hermes-agent/.venv/lib/python3.11/site-packages"
-if str(VENV_SITE_PACKAGES) not in sys.path:
-    sys.path.insert(0, str(VENV_SITE_PACKAGES))
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+from sim.volta_paths import prepend_sim_import_helpers, project_root_path  # noqa: E402
+
+prepend_sim_import_helpers()
+PROJECT_ROOT = project_root_path()
 
 
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
