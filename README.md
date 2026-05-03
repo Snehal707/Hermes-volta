@@ -8,9 +8,7 @@ Hermes Volta turns a plain-English filter request into computed component values
 
 ## Demo Video
 
-[![Hermes Volta demo video thumbnail](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
-
-Watch the hackathon demo: https://youtu.be/Qx1U6dPjKfs
+[![Hermes Volta demo video](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
 
 ## Screenshots
 

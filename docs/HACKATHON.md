@@ -6,9 +6,7 @@ Hermes Volta is a submission for **The Hermes Agent Creative Hackathon by Nous R
 
 ## Demo Video
 
-[![Hermes Volta demo video thumbnail](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
-
-Watch: https://youtu.be/Qx1U6dPjKfs
+[![Hermes Volta demo video](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
 
 Artifact gallery: [DEMO_ARTIFACTS.md](DEMO_ARTIFACTS.md)
 

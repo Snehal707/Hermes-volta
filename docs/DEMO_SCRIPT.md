@@ -25,7 +25,7 @@ Hermes Agent can operate a real engineering workflow: compute, simulate, verify,
 
 ## Demo Video
 
-Video: https://youtu.be/Qx1U6dPjKfs
+[![Hermes Volta demo video](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
 
 ## CLI Segment
 
