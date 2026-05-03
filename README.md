@@ -346,6 +346,13 @@ Hermes Volta is model-agnostic through Hermes Agent. The hackathon demo was run 
 
 Recent local smoke tests passed `13/13`, covering simulation, batch runs, optimizer, Monte Carlo, compare plot, netlist generation, PCB export, report generation, Telegram delivery, math accuracy, and Firecrawl availability.
 
+## Credits
+
+- **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** — orchestration runtime from **[Nous Research](https://github.com/NousResearch)** (`execute_code`, memory, Telegram, cron, dashboards). Hermes Volta plugs into these surfaces.
+- **[Kimi K2.6](https://kimi.moonshot.cn)** — [Moonshot AI](https://www.moonshot.cn/) foundation model cited for the Hermes Agent Creative Hackathon demo; Volta remains model-agnostic and the deterministic `sim/` pipeline is independent of LLM choice.
+- **Circuit simulation & EDA** — [PySpice](https://github.com/PySpiceOrg/PySpice), [Ngspice](https://ngspice.sourceforge.net/), [KiCad](https://www.kicad.org/) (including [`kicad-cli`](https://docs.kicad.org/master/en/cli/cli.html)), and [SKiDL](https://github.com/devbisme/skidl) for netlisting (with KiCad fallback where needed).
+- **Dashboard** — [FastAPI](https://fastapi.tiangolo.com/), [Matplotlib](https://matplotlib.org/) (Agg plots under `outputs/`), plus the broader Python Scientific stack in [`requirements.txt`](requirements.txt).
+
 ## Author
 
 Built by Snehal.
