@@ -17,7 +17,10 @@ Built for The Hermes Agent Creative Hackathon by Nous Research.
 
 [![Hermes Volta demo video](https://img.youtube.com/vi/Qx1U6dPjKfs/maxresdefault.jpg)](https://youtu.be/Qx1U6dPjKfs)
 
-> 20-minute full demo showing CLI design, Telegram voice + vision, batch processing, memory recall, autonomous web search, and dashboard live run across 15 unique Hermes features.
+> 20-minute full demo: CLI (skills, batch, memory, autonomous web search,
+> context references, RL trajectories, skill growth), Telegram (voice,
+> vision, autonomous mode, cron, background session, PCB render, rollback),
+> and live dashboard run.
 
 ## Screenshots
 
