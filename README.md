@@ -12,14 +12,6 @@ Hermes Volta turns a plain-English filter request into computed component values
 
 Watch the hackathon demo: https://youtu.be/Qx1U6dPjKfs
 
-## Interactive Demo Dashboard
-
-https://Snehal707.github.io/hermes-volta/demo-dashboard/
-
-Judges can open the hosted GitHub Pages dashboard to browse saved design history without running the backend.
-
-> Demo prompt: `design a 2kHz high-pass filter for a microphone at 5V`
-
 ## Screenshots
 
 ### Dashboard
