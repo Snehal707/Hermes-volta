@@ -1,10 +1,10 @@
-# Hermes Volta
+# Hermes Volta ⚡️
 
-Natural-language analog circuit design for Hermes Agent.
+> "Speak a circuit. Get a PCB on Telegram."
 
-Hermes Volta turns a plain-English filter request into computed component values, real PySpice/Ngspice simulation, validation plots, KiCad-compatible EDA artifacts, Gerbers, reports, Telegram delivery, and a live cyber-green dashboard.
+Built natively on **Hermes Agent + Kimi K2.6**. Uses **25 Hermes features**.
 
-**Built for The Hermes Agent Creative Hackathon by Nous Research.** This repository is a hackathon submission showing Hermes Agent pushed into an engineering/creative software domain: analog circuit design from natural language, multimodal Telegram control, live dashboard streaming, memory, skills, web search, scheduling, and generated EDA artifacts.
+**Hackathon submission — The Hermes Agent Creative Hackathon by Nous Research.**
 
 ## Demo Video
 
@@ -81,6 +81,8 @@ flowchart LR
     ART --> TELE[Telegram delivery]
     ART --> OUT[outputs/]
 ```
+
+That diagram summarizes the compact control/data flow; Hermes Agent exposes **skills, tools, memory, scheduling**, and **25+ features** exercised in Volta demos—see [**Hermes Agent Skills And Tools**](#hermes-agent-skills-and-tools) below.
 
 More detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
@@ -218,22 +220,15 @@ requirements.txt Pinned pip dependencies (dashboard + simulation stack)
 
 ## Quick Start
 
-This project targets WSL2 or Linux/macOS with Ngspice and KiCad CLI available. Dependencies are pinned in [`requirements.txt`](requirements.txt). Set `VOLTA_PROJECT_ROOT` to the repo if you symlink or relocate the checkout; optionally set `VOLTA_PYTHON` to your interpreter (Hermes-Agent venv, `./.venv` from `install_deps.sh`, etc.).
+Designed for Linux, macOS, or **WSL2** with Ngspice and optionally KiCad CLI. Python packages are pinned in [`requirements.txt`](requirements.txt). [`skills/volta/scripts/install_deps.sh`](skills/volta/scripts/install_deps.sh) installs system deps where it can (apt/brew), creates `./.venv`, and pip-installs Volta stacks. Override `VOLTA_PROJECT_ROOT` only if paths are unconventional; use `VOLTA_PYTHON` only if plain `python3` is not the interpreter you populated.
 
 ```bash
 cd hermes-volta
-bash skills/volta/scripts/install_deps.sh   # KiCad/ngspice (where available) + .venv + requirements.txt
-source .venv/bin/activate
-python dashboard/api.py
+bash skills/volta/scripts/install_deps.sh
+python3 dashboard/api.py
 ```
 
-If you already have a Hermes-Agent checkout with packages, override the interpreter instead:
-
-```bash
-cd hermes-volta
-VOLTA_PYTHON="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"
-"$VOLTA_PYTHON" dashboard/api.py
-```
+If imports fail outside the installer venv, use `./.venv/bin/python3 dashboard/api.py` instead of `python3`.
 
 Open:
 
@@ -250,10 +245,10 @@ bash skills/volta/scripts/install_deps.sh
 
 ## Run The Pipeline Directly
 
-Use PySpice-capable interpreter (`VOLTA_PYTHON`, or `./hermes-agent/.venv/bin/python3`, or `./.venv/bin/python3`):
+Use PySpice-capable `python3` (override with `$VOLTA_PYTHON` if needed):
 
 ```bash
-PY="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"
+PY="${VOLTA_PYTHON:-python3}"
 "$PY" - <<'PY'
 from sim.faraday_pipeline import run
 
@@ -272,7 +267,7 @@ PY
 
 ## Useful Commands
 
-Set `PY` once: `PY="${VOLTA_PYTHON:-./hermes-agent/.venv/bin/python3}"`.
+Set once: `PY="${VOLTA_PYTHON:-python3}"`.
 
 E24 resistor sweep:
 
