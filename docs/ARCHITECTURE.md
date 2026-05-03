@@ -4,79 +4,74 @@ Hermes Volta is not a standalone chatbot. It is a Hermes Agent project that uses
 
 ## System Diagram
 
+This matches the layered architecture shown in [`README.md`](../README.md#architecture).
+
 ```mermaid
-flowchart TD
-    subgraph Inputs
-        CLI[CLI prompts]
-        TEL[Telegram\ntext, voice, schematic photo]
-        DASH[Dashboard prompt]
+flowchart TB
+    subgraph ctrl["Control Layer"]
+        CLI[Hermes CLI]
+        TG[Telegram voice text vision]
+        DPrompt[Dashboard prompt]
+        DashAPI["FastAPI dashboard api.py\n(dashboard/)"]
     end
 
-    subgraph Hermes["Hermes Agent Runtime"]
-        MODEL[Kimi K2.6]
-        SKILL[Volta skill\nskills/volta/SKILL.md]
-        REFS[Skill references\nfilter math, KiCad footprints,\ncomponent recipes]
+    subgraph hermes["Hermes Agent"]
+        HAR[Hermes Agent runtime]
+        KIMI[Kimi K2.6]
+        VOLTA_SKILL["Volta skill\nskills/volta/SKILL.md"]
         MEMORY[Memory + session search]
-        TOOLS[Hermes tools\nexecute_code, send_message,\nweb search, cron,\nbackground, rollback]
+        TOOLS["Tools — execute_code, send_message,\ncron, background, rollback"]
     end
 
-    subgraph Volta["Hermes Volta Repo"]
-        PIPE[sim/faraday_pipeline.py]
-        SWEEP[sim/sweep_optimizer.py]
-        MC[sim/monte_carlo.py]
-        COMPARE[sim/compare_plot.py]
-        API[dashboard/api.py]
+    subgraph pipe["Faraday Pipeline"]
+        FP[faraday_pipeline.py]
+        SIM["PySpice + Ngspice\nsim/simulate.py"]
+        NET["KiCad netlist\nsim/netlist.py"]
+        PCBEXP["KiCad CLI export\nsim/pcb_export.py"]
+        RPT["Report\nsim/report.py"]
     end
 
-    subgraph Simulation["Engineering Pipeline"]
-        SIM[PySpice + Ngspice\nAC and transient simulation]
-        NET[SKiDL/manual KiCad netlist]
-        PCB[KiCad CLI starter board,\npreview, Gerbers]
-        REPORT[cutoff_report.txt]
+    subgraph deliver["Artifacts and Delivery"]
+        PLOTS["Plots + metrics\nfrequency / transient / compare"]
+        EDA[EDA — netlist, PCB starter, Gerbers]
+        DASHPAN[Dashboard artifact panels]
+        TGRAM[Telegram delivery]
+        OUTDIR[outputs/]
     end
 
-    subgraph Artifacts
-        BODE[frequency_response.png]
-        WAVE[waveform.png]
-        EFFECT[compare_plot.png]
-        BOARD[pcb_view.png]
-        GERBERS[gerbers.zip]
-        TXT[cutoff_report.txt]
-    end
+    DPrompt --> DashAPI
+    CLI --> HAR
+    TG --> HAR
+    DashAPI --> HAR
 
-    CLI --> Hermes
-    TEL --> Hermes
-    DASH --> API
-    API --> PIPE
+    HAR --- KIMI
+    HAR --- VOLTA_SKILL
+    HAR --- MEMORY
+    HAR --- TOOLS
 
-    MODEL --> SKILL
-    SKILL --> REFS
-    SKILL --> PIPE
-    MEMORY --> PIPE
-    TOOLS --> PIPE
+    HAR --> FP
+    VOLTA_SKILL --> FP
 
-    PIPE --> SIM
-    PIPE --> NET
-    PIPE --> PCB
-    PIPE --> REPORT
-    PIPE --> SWEEP
-    PIPE --> MC
-    PIPE --> COMPARE
+    FP --> SIM
+    FP --> NET
+    FP --> PCBEXP
+    FP --> RPT
 
-    SIM --> BODE
-    SIM --> WAVE
-    COMPARE --> EFFECT
-    PCB --> BOARD
-    PCB --> GERBERS
-    REPORT --> TXT
+    SIM --> PLOTS
+    NET --> EDA
+    PCBEXP --> EDA
 
-    BODE --> DASH
-    WAVE --> DASH
-    EFFECT --> DASH
-    BOARD --> DASH
-    TXT --> TEL
-    GERBERS --> TEL
+    RPT --> OUTDIR
+
+    PLOTS --> DASHPAN
+
+    PLOTS --> TGRAM
+    PLOTS --> OUTDIR
+    EDA --> TGRAM
+    EDA --> OUTDIR
 ```
+
+`sim/sweep_optimizer.py`, `sim/monte_carlo.py`, and `sim/compare_plot.py` are auxiliary tools the agent invokes separately; **`faraday_pipeline.run()` does not chain them**. See [`sim/faraday_pipeline.py`](../sim/faraday_pipeline.py).
 
 ## Where Hermes Agent Lives
 
