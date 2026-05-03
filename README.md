@@ -58,52 +58,67 @@ This repository packages the Volta skill, simulation and EDA pipeline (`sim/`), 
 
 ```mermaid
 flowchart TB
-    subgraph Inputs["Control Layer"]
+    subgraph ctrl["Control Layer"]
         CLI[Hermes CLI]
-        TG[Telegram\nvoice, text, vision]
-        DASH[Dashboard prompt]
+        TG[Telegram voice text vision]
+        DPrompt[Dashboard prompt]
+        DashAPI["FastAPI dashboard api.py\n(dashboard/)"]
     end
 
-    subgraph Hermes["Hermes Agent Runtime"]
+    subgraph hermes["Hermes Agent"]
+        HAR[Hermes Agent runtime]
         KIMI[Kimi K2.6]
-        SKILL[Volta skill\nSKILL.md]
-        MEM[Memory + session search]
-        TOOLS[Tools: execute_code,\nsend_message, cron,\nbackground, rollback]
+        VOLTA_SKILL["Volta skill\nskills/volta/SKILL.md"]
+        MEMORY[Memory + session search]
+        TOOLS["Tools — execute_code, send_message,\ncron, background, rollback"]
     end
 
-    subgraph Pipeline["Faraday Pipeline"]
-        PIPE[sim/faraday_pipeline.py]
-        SIM[PySpice + Ngspice\nsim/simulate.py]
-        NET[KiCad netlist\nsim/netlist.py]
-        PCB[KiCad CLI export\nsim/pcb_export.py]
-        REPORT[sim/report.py]
+    subgraph pipe["Faraday Pipeline"]
+        FP[faraday_pipeline.py]
+        SIM["PySpice + Ngspice\nsim/simulate.py"]
+        NET["KiCad netlist\nsim/netlist.py"]
+        PCBEXP["KiCad CLI export\nsim/pcb_export.py"]
+        RPT["Report\nsim/report.py"]
     end
 
-    subgraph Artifacts["Artifacts and Delivery"]
-        BODE[frequency_response.png]
-        WAVE[waveform.png]
-        EFFECT[compare_plot.png]
-        BOARD[pcb_view.png]
-        GERBERS[gerbers.zip]
-        TELE[Telegram delivery]
-        DASH2[Dashboard panels]
+    subgraph deliver["Artifacts and Delivery"]
+        PLOTS["Plots + metrics\nfrequency / transient / compare"]
+        EDA[EDA — netlist, PCB starter, Gerbers]
+        DASHPAN[Dashboard artifact panels]
+        TGRAM[Telegram delivery]
+        OUTDIR[outputs/]
     end
 
-    Inputs --> Hermes
-    Hermes --> PIPE
-    PIPE --> SIM
-    PIPE --> NET
-    PIPE --> PCB
-    PIPE --> REPORT
-    SIM --> BODE
-    SIM --> WAVE
-    SIM --> EFFECT
-    PCB --> BOARD
-    PCB --> GERBERS
-    BODE --> TELE
-    BOARD --> TELE
-    BODE --> DASH2
-    BOARD --> DASH2
+    DPrompt --> DashAPI
+    CLI --> HAR
+    TG --> HAR
+    DashAPI --> HAR
+
+    HAR --- KIMI
+    HAR --- VOLTA_SKILL
+    HAR --- MEMORY
+    HAR --- TOOLS
+
+    HAR --> FP
+    VOLTA_SKILL --> FP
+
+    FP --> SIM
+    FP --> NET
+    FP --> PCBEXP
+    FP --> RPT
+
+    SIM --> PLOTS
+    NET --> EDA
+    PCBEXP --> EDA
+
+    RPT --> OUTDIR
+
+    PLOTS --> DASHPAN
+
+    PLOTS --> TGRAM
+    PLOTS --> OUTDIR
+    EDA --> TGRAM
+    EDA --> OUTDIR
 ```
 
 The diagram summarizes how control surfaces, Hermes/Kimi, and the Volta pipeline connect to inspectable outputs. For the feature-level breakdown, see [**Hermes Agent Skills And Tools**](#hermes-agent-skills-and-tools) below.
